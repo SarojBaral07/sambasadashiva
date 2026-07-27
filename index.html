@@ -279,31 +279,44 @@
 
   .shloka {
     font-family: 'Noto Serif Devanagari', serif;
-    font-size: 1.30rem;
+    font-size: 1.30rem; /* 👈 default/fallback size — used only if a tab below doesn't override it */
     line-height: 2;
     color: var(--text-main);
     white-space: pre-wrap;
   }
-/* शिव मानस पूजाका श्लोकहरूको मात्र फन्ट साइज (१३०% भन्दा सानो बनाउन) */
-#tab-manas .shloka {
-    font-size: 1.30rem; /* 👈 यहाँ तपाईंलाई जति चाहिन्छ त्यति साइज राख्नुहोस् (जस्तै: 1.1rem वा 1.2rem) */
-}
+
+  /* ── हरेक ट्याबको आफ्नै फन्ट साइज (यहाँ प्रत्येक ट्याबको लागि छुट्टै rem राख्नुहोस्) ── */
+  #tab-shanti     .shloka { font-size: 1.50rem; }
+  #tab-ganesh     .shloka { font-size: 1.50rem; }
+  #tab-surya      .shloka { font-size: 1.50rem; }
+  #tab-vishnu     .shloka { font-size: 1.40rem; }
+  #tab-shivaguru  .shloka { font-size: 1.30rem; }
+  #tab-rudra      .shloka { font-size: 1.50rem; }
+  #tab-pancha     .shloka { font-size: 1.40rem; }
+  #tab-manas      .shloka { font-size: 1.40rem; }
+  #tab-tandava    .shloka { font-size: 1.50rem; }
+  #tab-saraswati  .shloka { font-size: 1.40rem; }
+  #tab-lakshmi    .shloka { font-size: 1.40rem; }
+  #tab-parvati-1  .shloka { font-size: 1.50rem; }
+  #tab-parvati-2  .shloka { font-size: 1.50rem; }
+  #tab-parvati-3  .shloka { font-size: 1.15rem; }
+
   .shloka .pause { color: var(--gold); font-weight: 600; }
   .shloka .om    { color: var(--saffron); font-weight: 700; }
 
   .verse-num {
-    display: inline-block;
-    background: var(--saffron);
-    color: white;
-    font-size: 0.58rem;
-    font-weight: 700;
-    border-radius: 50%;
-    width: 17px; height: 17px;
-    line-height: 17px;
-    text-align: center;
-    vertical-align: super;
-    margin-left: 3px;
-    font-family: sans-serif;
+    display: inline;
+    background: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    border-radius: 0;
+    width: auto; height: auto;
+    line-height: inherit;
+    text-align: left;
+    vertical-align: baseline;
+    margin-left: 4px;
   }
 
   .shanti-tag {
@@ -1459,16 +1472,22 @@ function handleGesture() {
     }
 }
 
-// ── Font size ──
-const steps = [75, 85, 100, 115, 130, 150, 170];
-let fIdx = 2;
-const fontTargetEls = document.querySelectorAll('.shloka, .jay-item'); // एकपटक मात्र क्यास गरिने
+// ── Font size (हरेक ट्याबको आफ्नै default साइजको सापेक्षमा zoom गर्ने) ──
+const steps = [70, 85, 100, 115, 130, 150, 170];
+let fIdx = 2; // 100% = ट्याबको आफ्नै CSS मा तोकिएको default साइज (कुनै परिवर्तन छैन)
+const fontTargetEls = Array.from(document.querySelectorAll('.shloka, .jay-item'));
+// हरेक एलिमेन्टको आफ्नै (CSS बाट आउने) base font-size एकपटक मात्र सेभ गरिन्छ,
+// ताकि zoom गर्दा त्यो ट्याबको आफ्नै customized साइजबाट नै गणना होस्, अरू ट्याबको साइज मिश्रण नहोस्।
+fontTargetEls.forEach(el => {
+  el.dataset.baseFontSize = parseFloat(getComputedStyle(el).fontSize);
+});
 const fontLabelEl = document.getElementById('fontLabel');
 function changeFont(dir) {
   fIdx = Math.max(0, Math.min(steps.length - 1, fIdx + dir));
   const pct = steps[fIdx];
   fontTargetEls.forEach(el => {
-    el.style.fontSize = (pct / 100) + 'rem';
+    const base = parseFloat(el.dataset.baseFontSize);
+    el.style.fontSize = (base * pct / 100) + 'px';
   });
   fontLabelEl.textContent = pct + '%';
 }
