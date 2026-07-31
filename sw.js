@@ -1,30 +1,26 @@
-const CACHE = 'stotra-v2';
-const BASE = '/sambasadashiva';
-const FILES = [
-  BASE + '/index.html',
-  BASE + '/manifest.json',
-  BASE + '/icon-192.png',
-  BASE + '/icon-512.png'
-];
-
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES))
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
-});
+{
+  "name": "दैनिक स्तोत्र पाठ",
+  "short_name": "स्तोत्र",
+  "description": "ॐ नमः शिवाय — दैनिक स्तोत्र पाठ",
+  "start_url": "/sambasadashiva/",
+  "scope": "/sambasadashiva/",
+  "display": "standalone",
+  "background_color": "#2C1A0A",
+  "theme_color": "#8B1A1A",
+  "orientation": "portrait",
+  "lang": "sa",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
